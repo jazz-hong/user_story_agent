@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Story Agent - Agile Story Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <h1>User Story Agent</h1>
+            </div>
+            <p class="tagline">Transform your ideas into professional Agile User Stories</p>
+            <button id="settingsBtn" class="btn-settings" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </header>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
+                    <button class="modal-close" id="closeSettingsBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- API Status -->
+                    <div class="api-status" id="apiStatus">
+                        <div class="status-indicator status-inactive">
+                            <i class="fas fa-circle"></i>
+                            <span>AI Not Configured</span>
+                        </div>
+                    </div>
+
+                    <!-- API Key Input -->
+                    <div class="form-group">
+                        <label for="apiKeyInput">
+                            <i class="fas fa-key"></i> Groq API Key
+                        </label>
+                        <div class="input-with-button">
+                            <input 
+                                type="password" 
+                                id="apiKeyInput" 
+                                placeholder="Enter your Groq API key (starts with gsk_...)"
+                                autocomplete="off"
+                            >
+                            <button id="toggleApiKeyBtn" class="btn-icon" title="Show/Hide">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="form-hint">
+                            Your API key is stored locally in your browser and never sent to any server except Groq.
+                        </small>
+                    </div>
+
+                    <!-- Setup Instructions -->
+                    <div class="setup-instructions">
+                        <h3><i class="fas fa-rocket"></i> Don't have an API key?</h3>
+                        <p>Get your FREE Groq API key in 30 seconds:</p>
+                        <ol>
+                            <li>Visit <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a></li>
+                            <li>Sign up with your email (free account)</li>
+                            <li>Go to "API Keys" section</li>
+                            <li>Click "Create API Key" and copy it</li>
+                            <li>Paste it above and click "Save"</li>
+                        </ol>
+                        <div class="feature-highlight">
+                            <i class="fas fa-gift"></i>
+                            <strong>FREE Tier:</strong> 14,400 requests/day (perfect for 2-10 Product Owners!)
+                        </div>
+                    </div>
+
+                    <!-- Usage Stats -->
+                    <div class="usage-stats" id="usageStats" style="display: none;">
+                        <h3><i class="fas fa-chart-bar"></i> Today's Usage</h3>
+                        <div class="usage-bar">
+                            <div class="usage-progress" id="usageProgress" style="width: 0%"></div>
+                        </div>
+                        <p class="usage-text">
+                            <span id="usageCount">0</span> / <span id="usageLimit">14,400</span> requests
+                            <span class="usage-percentage">(<span id="usagePercentage">0</span>%)</span>
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="modal-actions">
+                        <button id="saveApiKeyBtn" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save API Key
+                        </button>
+                        <button id="testApiKeyBtn" class="btn btn-info" style="display: none;">
+                            <i class="fas fa-vial"></i>
+                            Test Connection
+                        </button>
+                        <button id="clearApiKeyBtn" class="btn btn-danger" style="display: none;">
+                            <i class="fas fa-trash"></i>
+                            Clear API Key
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="section-header">
+                    <i class="fas fa-pencil-alt"></i>
+                    <h2>Input Your Requirements</h2>
+                </div>
+                
+                <!-- File Upload Zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drag & Drop Your File Here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept=".txt,.md,.html,.doc,.docx,.pdf" hidden>
+                    <div class="supported-formats">
+                        <i class="fas fa-file-word"></i> Word
+                        <i class="fas fa-file-code"></i> HTML
+                        <i class="fas fa-file-alt"></i> Markdown
+                        <i class="fas fa-file-pdf"></i> PDF
+                        <i class="fas fa-file"></i> Text
+                    </div>
+                </div>
+
+                <!-- File Info Display -->
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <i class="fas fa-file-check"></i>
+                        <span id="fileName">filename.txt</span>
+                        <span id="fileSize" class="file-size">0 KB</span>
+                    </div>
+                    <button class="btn-remove" id="removeFileBtn" title="Remove file and switch to manual input">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- File Usage Notice -->
+                <div class="file-notice" id="fileNotice" style="display: none;">
+                    <i class="fas fa-info-circle"></i>
+                    <span>📎 File attached. The AI will read this file + any notes you add in the text area below.</span>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="input-container">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Paste your meeting minutes, bullet points, or feature ideas here...&#10;&#10;Example:&#10;- Need a dashboard for admins to view user analytics&#10;- Should show active users, registration trends&#10;- Export data to CSV&#10;- Real-time updates preferred"
+                        rows="12"
+                    ></textarea>
+                    <div class="character-count">
+                        <span id="charCount">0</span> characters
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="generateBtn" class="btn btn-primary">
+                        <i class="fas fa-magic"></i>
+                        Generate User Stories
+                    </button>
+                    <button id="clearBtn" class="btn btn-secondary">
+                        <i class="fas fa-eraser"></i>
+                        Clear
+                    </button>
+                </div>
+            </section>
+
+            <!-- Output Section -->
+            <section class="output-section" id="outputSection" style="display: none;">
+                <div class="section-header">
+                    <i class="fas fa-file-alt"></i>
+                    <h2>Generated User Stories</h2>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Analyzing requirements and crafting user stories...</p>
+                </div>
+
+                <!-- Output Content -->
+                <div id="outputContent" class="output-content" style="display: none;">
+                    <div class="output-actions">
+                        <button id="copyBtn" class="btn btn-success">
+                            <i class="fas fa-copy"></i>
+                            Copy to Clipboard
+                        </button>
+                        <button id="regenerateBtn" class="btn btn-info">
+                            <i class="fas fa-redo"></i>
+                            Regenerate
+                        </button>
+                    </div>
+                    <div id="outputText" class="output-text"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Instructions Panel (Collapsible) -->
+        <aside class="instructions-panel">
+            <div class="panel-header" id="instructionsToggle">
+                <i class="fas fa-info-circle"></i>
+                <h3>How to Use This Agent</h3>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="panel-content" id="instructionsContent">
+                <div class="instruction-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Option 1: Upload a File</strong>
+                        <p>Upload your meeting notes (.docx, .html, .md, .pdf, .txt). The AI will read the file content. You can add extra notes in the text area below.</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Option 2: Type Directly</strong>
+                        <p>Simply paste or type your requirements in the text area. No file upload needed.</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Generate User Stories:</strong>
+                        <p>Click "Generate" and the AI will analyze your input (file + notes OR just text) and create professional user stories.</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Review & Copy:</strong>
+                        <p>Check the "CLARIFICATION NEEDED" section, answer questions, regenerate if needed, then copy to OpenProject.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with 💡 by <strong>Jazz Hong</strong> | Powered by Groq AI | Empowering Agile Excellence</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Copied to clipboard!</span>
+    </div>
+
+    <!-- External Libraries for File Processing -->
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.0/marked.min.js"></script>
+    
+    <!-- AI Integration -->
+    <script src="js/groq-ai.js"></script>
+    <script src="js/file-processor.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
