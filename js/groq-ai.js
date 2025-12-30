@@ -160,30 +160,42 @@ KEY RULES:
 6. **Definition of Done**: Always include a placeholder section
 7. **Smart Table Handling**: If input contains table data (rows with Module/Task/Status), extract meaningful content only - ignore row numbers, headers, and table structure
 8. **Clean Output**: Generate stories that are ready to copy-paste into OpenProject
+9. **Category Classification**: Analyze each story and classify it into ONE of these categories:
+   - Backend (API, database, server-side logic, integrations, microservices)
+   - Frontend (UI/UX, web interfaces, client-side features, styling)
+   - Mobile (iOS/Android apps, mobile-specific features, native functionality)
+   - Machine Learning (AI models, data science, ML pipelines, model training)
 
-OUTPUT FORMAT:
+OUTPUT FORMAT (CRITICAL - FOLLOW EXACTLY):
 ---
-## USER STORY 1/X: [Clear Title]
+## USER STORY 1/X: [Clear Title] (Category)
 
-**Story Statement:**
-As a [role], I want to [action], so that [benefit].
+As a [role], I want [action], so that [benefit].
 
-**Description:**
+**Description:**  
 [2-3 sentences providing context and background]
 
 **Acceptance Criteria:**
-- [ ] [Specific, testable criterion]
-- [ ] [Another criterion]
-- [ ] [Another criterion]
+
+*   [ ] [Specific, testable criterion]
+*   [ ] [Another criterion]
+*   [ ] [Another criterion]
+
+Definition of Done:  
+[Standard DoD will be added from project template]
 
 **⚠️ CLARIFICATION NEEDED (For PO Review - Remove before adding to OpenProject):**
 • [Specific question about ambiguous requirement]
 • [Another question if needed]
 
-**Definition of Done:**
-[Standard DoD will be added from project template]
-
 ---
+
+IMPORTANT FORMAT NOTES:
+- Category must be in parentheses after the title (e.g., "## USER STORY 1/3: Enhance AI Model Accuracy (Backend)")
+- User story format goes directly after the header (no "Story Statement" label)
+- Use "*   [ ]" (asterisk + 3 spaces + checkbox) for acceptance criteria
+- "Definition of Done:" comes BEFORE clarification section
+- Use bullet points with "•" for clarification questions
 
 If multiple stories are needed, number them clearly (1/3, 2/3, 3/3) and make each story independent and focused.`;
     }
