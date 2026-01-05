@@ -154,13 +154,16 @@ Your task is to analyze input (which may come from meeting notes, bullet points,
 KEY RULES:
 1. **One Feature Per Story**: If input contains multiple features, create separate stories
 2. **Story Structure**: Always use "As a [role], I want to [action], so that [benefit]"
-3. **Standard Roles**: Use only: Developer, User, Administrator, System
+3. **Standard Roles - CRITICAL**: Use ONLY these roles:
+   - **User**: For most features (default choice for end-users, including model training, data operations, and system interactions)
+   - **Administrator**: Only for admin-specific features (user management, system configuration, permissions)
+   - **System**: Only for automated backend processes (scheduled tasks, integrations, webhooks)
+   - **NEVER use "Developer"** - Replace with "User" or "Administrator" depending on context
 4. **Acceptance Criteria**: Create 3-7 clear, testable checklist items
-5. **Flag Ambiguities**: Add "⚠️ CLARIFICATION NEEDED" section with specific questions
-6. **Definition of Done**: Always include a placeholder section
-7. **Smart Table Handling**: If input contains table data (rows with Module/Task/Status), extract meaningful content only - ignore row numbers, headers, and table structure
-8. **Clean Output**: Generate stories that are ready to copy-paste into OpenProject
-9. **Category Classification**: Analyze each story and classify it into ONE of these categories:
+5. **Definition of Done**: Always include the complete, fixed DoD checklist (see format below)
+6. **Smart Table Handling**: If input contains table data (rows with Module/Task/Status), extract meaningful content only - ignore row numbers, headers, and table structure
+7. **Clean Output**: Generate stories that are ready to copy-paste into OpenProject
+8. **Category Classification**: Analyze each story and classify it into ONE of these categories:
    - Backend (API, database, server-side logic, integrations, microservices)
    - Frontend (UI/UX, web interfaces, client-side features, styling)
    - Mobile (iOS/Android apps, mobile-specific features, native functionality)
@@ -181,12 +184,28 @@ As a [role], I want [action], so that [benefit].
 *   [ ] [Another criterion]
 *   [ ] [Another criterion]
 
-Definition of Done:  
-[Standard DoD will be added from project template]
+**Definition of Done:**
 
-**⚠️ CLARIFICATION NEEDED (For PO Review - Remove before adding to OpenProject):**
-• [Specific question about ambiguous requirement]
-• [Another question if needed]
+*   [ ] All linting issue resolved
+*   [ ] All unit test passed
+*   [ ] All security test passed
+*   [ ] All performance test passed
+*   [ ] Gitlab CI is configured for all relevant test stages
+*   [ ] If it is to resolve a bug, there must be a corresponding unit test to prevent regression
+*   [ ] Profiling is done
+*   [ ] Model metric is recorded in repository
+*   [ ] Data retention rule is configured
+*   [ ] Documentations are updated
+    *   [ ] Inline comments
+    *   [ ] Readme
+*   [ ] Software Design Document is updated
+    *   [ ] Data Dictionary
+    *   [ ] Test Documentation
+*   [ ] Software Architecture Design is updated
+*   [ ] UAT script is done
+*   [ ] Work is version controlled and stored to respective repository.
+*   [ ] UI/UX is designed in accordance to SAINS standard for external projects.
+*   [ ] Data retention is configured
 
 ---
 
@@ -194,8 +213,16 @@ IMPORTANT FORMAT NOTES:
 - Category must be in parentheses after the title (e.g., "## USER STORY 1/3: Enhance AI Model Accuracy (Backend)")
 - User story format goes directly after the header (no "Story Statement" label)
 - Use "*   [ ]" (asterisk + 3 spaces + checkbox) for acceptance criteria
-- "Definition of Done:" comes BEFORE clarification section
-- Use bullet points with "•" for clarification questions
+- "**Definition of Done:**" must be in BOLD and include the complete fixed checklist
+- NO clarification section - all stories must be complete and ready to use
+- Definition of Done is identical for ALL stories (use the exact format shown above)
+
+ROLE SELECTION EXAMPLES:
+- ✅ "As a User, I want to retrain the AI model..." (model training, data operations)
+- ✅ "As a User, I want to upload documents..." (regular user features)
+- ✅ "As an Administrator, I want to manage user permissions..." (admin-only features)
+- ✅ "As a System, I want to automatically sync data..." (automated processes)
+- ❌ "As a Developer, I want to..." (NEVER USE - replace with "User" or "Administrator")
 
 If multiple stories are needed, number them clearly (1/3, 2/3, 3/3) and make each story independent and focused.`;
     }
@@ -209,7 +236,7 @@ If multiple stories are needed, number them clearly (1/3, 2/3, 3/3) and make eac
 INPUT:
 ${input}
 
-Generate complete, professional User Stories that are ready to copy into OpenProject. Remember to flag any ambiguities and suggest story splitting if the input contains multiple distinct features.`;
+Generate complete, professional User Stories that are ready to copy into OpenProject. Each story must include the full Definition of Done checklist. Suggest story splitting if the input contains multiple distinct features.`;
 
         return await this.generateResponse(prompt);
     }
