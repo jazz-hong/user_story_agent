@@ -153,7 +153,7 @@ Your task is to analyze input (which may come from meeting notes, bullet points,
 
 KEY RULES:
 1. **One Feature Per Story**: If input contains multiple features, create separate stories
-2. **Story Structure**: Always use "As a [role], I want to [action], so that [benefit]"
+2. **Story Structure**: Always use "> As a **[role]**, I want [action], so that [benefit]"
 3. **Standard Roles - CRITICAL**: Use ONLY these roles:
    - **User**: For most features (default choice for end-users, including model training, data operations, and system interactions)
    - **Administrator**: Only for admin-specific features (user management, system configuration, permissions)
@@ -163,19 +163,14 @@ KEY RULES:
 5. **Definition of Done**: Always include the complete, fixed DoD checklist (see format below)
 6. **Smart Table Handling**: If input contains table data (rows with Module/Task/Status), extract meaningful content only - ignore row numbers, headers, and table structure
 7. **Clean Output**: Generate stories that are ready to copy-paste into OpenProject
-8. **Category Classification**: Analyze each story and classify it into ONE of these categories:
-   - Backend (API, database, server-side logic, integrations, microservices)
-   - Frontend (UI/UX, web interfaces, client-side features, styling)
-   - Mobile (iOS/Android apps, mobile-specific features, native functionality)
-   - Machine Learning (AI models, data science, ML pipelines, model training)
 
 OUTPUT FORMAT (CRITICAL - FOLLOW EXACTLY):
 ---
-## USER STORY 1/X: [Clear Title] (Category)
+## USER STORY 1/X: [Clear Title]
 
-As a [role], I want [action], so that [benefit].
+> As a **[role]**, I want [action], so that [benefit]
 
-**Description:**  
+**Description:**
 [2-3 sentences providing context and background]
 
 **Acceptance Criteria:**
@@ -210,7 +205,6 @@ As a [role], I want [action], so that [benefit].
 ---
 
 IMPORTANT FORMAT NOTES:
-- Category must be in parentheses after the title (e.g., "## USER STORY 1/3: Enhance AI Model Accuracy (Backend)")
 - User story format goes directly after the header (no "Story Statement" label)
 - Use "*   [ ]" (asterisk + 3 spaces + checkbox) for acceptance criteria
 - "**Definition of Done:**" must be in BOLD and include the complete fixed checklist
@@ -239,6 +233,72 @@ ${input}
 Generate complete, professional User Stories that are ready to copy into OpenProject. Each story must include the full Definition of Done checklist. Suggest story splitting if the input contains multiple distinct features.`;
 
         return await this.generateResponse(prompt);
+    }
+
+    /**
+     * Generate User Story from Chat input
+     * This method enforces Story format output
+     */
+    async generateStoryFromChat(input) {
+        const prompt = `You are an expert Agile Coach and Business Analyst specializing in writing high-quality User Stories.
+
+Your task is to analyze the user's input and generate professional User Stories. The input can be:
+- Meeting notes
+- Feature ideas
+- Bullet points
+- Requirements description
+- Any software-related description
+
+Always try to interpret the input as user story requirements and generate appropriate User Stories. Do NOT refuse unless the input is completely unrelated to software (like asking about weather, personal questions, etc.).
+
+USER INPUT:
+${input}
+
+OUTPUT FORMAT (MUST FOLLOW):
+---
+## USER STORY 1/X: [Clear Title]
+
+> As a **[role]**, I want [action], so that [benefit]
+
+**Description:**
+[2-3 sentences providing context and background]
+
+**Acceptance Criteria:**
+
+*   [ ] [Specific, testable criterion]
+*   [ ] [Another criterion]
+*   [ ] [Another criterion]
+
+**Definition of Done:**
+
+*   [ ] All linting issue resolved
+*   [ ] All unit test passed
+*   [ ] All security test passed
+*   [ ] All performance test passed
+*   [ ] Gitlab CI is configured for all relevant test stages
+*   [ ] If it is to resolve a bug, there must be a corresponding unit test to prevent regression
+*   [ ] Profiling is done
+*   [ ] Model metric is recorded in repository
+*   [ ] Data retention rule is configured
+*   [ ] Documentations are updated
+    *   [ ] Inline comments
+    *   [ ] Readme
+*   [ ] Software Design Document is updated
+    *   [ ] Data Dictionary
+    *   [ ] Test Documentation
+*   [ ] Software Architecture Design is updated
+*   [ ] UAT script is done
+*   [ ] Work is version controlled and stored to respective repository.
+*   [ ] UI/UX is designed in accordance to SAINS standard for external projects.
+*   [ ] Data retention is configured
+
+---
+
+If multiple features are mentioned, create separate stories for each. If the input is unclear, make reasonable assumptions and create stories based on the information provided.`;
+
+        return await this.generateResponse(prompt, {
+            maxTokens: 4500
+        });
     }
 
     /**
